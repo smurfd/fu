@@ -1,0 +1,51 @@
+#!/usr/bin/env python
+"""
+Rewriting this: https://raw.githubusercontent.com/freebsd/freebsd-src/main/usr.sbin/freebsd-update/freebsd-update.sh
+In Python to see if it speeds up disc actions like inspecting system...
+"""
+import sys
+
+class Configuration:
+  def __init__(option):
+    self.saved = False
+    self.value = ''
+    self.option = option
+
+def usage():
+  print('usage: fu [options] command ...\n')
+  print('Options:')
+  print('  -b basedir   -- Operate on a system mounted at basedir')
+  print('                  (default: /)')
+  print('  -d workdir   -- Store working files in workdir')
+  print('                  (default: /var/db/freebsd-update/)')
+  print('  -f conffile  -- Read configuration options from conffile')
+  print('                  (default: /etc/freebsd-update.conf)')
+  print('  -F           -- Force a fetch operation to proceed in the')
+  print('                  case of an unfinished upgrade')
+  print('  -j jail      -- Operate on the given jail specified by jid or name')
+  print('  -k KEY       -- Trust an RSA key with SHA256 hash of KEY')
+  print('  -r release   -- Target for upgrade (e.g., 13.2-RELEASE)')
+  print('  -s server    -- Server from which to fetch updates')
+  print('                  (default: update.FreeBSD.org)')
+  print('  -t address   -- Mail output of cron command, if any, to address')
+  print('                  (default: root)')
+  print('  --not-running-from-cron')
+  print('               -- Run without a tty, for use by automated tools')
+  print('  --currently-running release')
+  print('               -- Update as if currently running this release')
+  print('Commands:')
+  print('  fetch        -- Fetch updates from server')
+  print('  cron         -- Sleep rand(3600) seconds, fetch updates, and send an')
+  print('                  email if updates were found')
+  print('  upgrade      -- Fetch upgrades to FreeBSD version specified via -r option')
+  print('  updatesready -- Check if there are fetched updates ready to install')
+  print('  install      -- Install downloaded updates or upgrades')
+  print('  rollback     -- Uninstall most recently installed updates')
+  print('  IDS          -- Compare the system against an index of "known good" files')
+  print('  showconfig   -- Show configuration')
+  exit()
+
+if __name__ == '__main__':
+  if len(sys.argv) < 2:
+    usage()
+
