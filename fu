@@ -6,10 +6,24 @@ In Python to see if it speeds up disc actions like inspecting system...
 import sys
 
 class Configuration:
-  def __init__(option):
-    self.saved = False
-    self.value = ''
-    self.option = option
+  def __init__(self, saved=False, value='iii', option=None):
+    self.list = []
+    self.saved = False if not saved else saved
+    self.value = 'i' if not value else value
+    self.option = option if not option else option
+
+  def init(self):
+    self.list.extend([Configuration(False, 'ii', i) for i in "KEYPRINT WORKDIR SERVERNAME MAILTO ALLOWADD ALLOWDELETE KEEPMODIFIEDMETADATA COMPONENTS IGNOREPATHS UPDATEIFUNMODIFIED BASEDIR VERBOSELEVEL TARGETRELEASE STRICTCOMPONENTS MERGECHANGES IDSIGNOREPATHS BACKUPKERNEL BACKUPKERNELDIR BACKUPKERNELSYMBOLFILES".split(' ')])
+  def null(self):
+    self.list = [Configuration(x.saved, '', x.option) for x in self.list]
+  def save(self):
+    self.list = [Configuration(True, x.value, x.option) for x in self.list]
+  def get(self):
+    return self.list
+  def getitem(self):
+    return self.saved, self.value, self.option
+  def print(self, cfg):
+    [print(x.getitem()) for x in cfg.get()]
 
 def usage():
   print('usage: fu [options] command ...\n')
@@ -45,7 +59,18 @@ def usage():
   print('  showconfig   -- Show configuration')
   exit()
 
+
 if __name__ == '__main__':
-  if len(sys.argv) < 2:
-    usage()
+  #if len(sys.argv) < 2:
+  #  usage()
+  cfg = Configuration()
+  print("-----")
+  cfg.init()
+  cfg.print(cfg)
+  print("-----------")
+  cfg.null()
+  cfg.print(cfg)
+  print("-----------")
+  cfg.save()
+  cfg.print(cfg)
 
