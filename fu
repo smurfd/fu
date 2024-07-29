@@ -3,7 +3,7 @@
 Rewriting this: https://raw.githubusercontent.com/freebsd/freebsd-src/main/usr.sbin/freebsd-update/freebsd-update.sh
 In Python to see if it speeds up disc actions like inspecting system...
 """
-import sys
+import sys, os
 
 class Configuration:
   def __init__(self, saved=False, value='iii', option=None):
@@ -11,13 +11,59 @@ class Configuration:
     self.saved = False if not saved else saved
     self.value = 'i' if not value else value
     self.option = option if not option else option
-
+    self.keyprint = ''
+    self.workdir = ''
+    self.servername = ''
+    self.mailto = ''
+    self.allowadd = ''
+    self.allowdelete = ''
+    self.allowkeepmodmeta = ''
+    self.components = ''
+    self.ignorepaths = ''
+    self.idsignorepaths = ''
+    self.updateifunmodified = ''
+    self.mergechanges = ''
+    self.basedir = ''
   def init(self):
-    self.list.extend([Configuration(False, 'ii', i) for i in "KEYPRINT WORKDIR SERVERNAME MAILTO ALLOWADD ALLOWDELETE KEEPMODIFIEDMETADATA COMPONENTS IGNOREPATHS UPDATEIFUNMODIFIED BASEDIR VERBOSELEVEL TARGETRELEASE STRICTCOMPONENTS MERGECHANGES IDSIGNOREPATHS BACKUPKERNEL BACKUPKERNELDIR BACKUPKERNELSYMBOLFILES".split(' ')])
+    self.list.extend([Configuration(False, 'ii', i) for i in 'KEYPRINT WORKDIR SERVERNAME MAILTO ALLOWADD ALLOWDELETE KEEPMODIFIEDMETADATA COMPONENTS IGNOREPATHS UPDATEIFUNMODIFIED BASEDIR VERBOSELEVEL TARGETRELEASE STRICTCOMPONENTS MERGECHANGES IDSIGNOREPATHS BACKUPKERNEL BACKUPKERNELDIR BACKUPKERNELSYMBOLFILES'.split(' ')])
   def null(self):
     self.list = [Configuration(x.saved, '', x.option) for x in self.list]
   def save(self):
     self.list = [Configuration(True, x.value, x.option) for x in self.list]
+  def merge(self):
+    self.list = [Configuration(True, x.value, x.option) for x in self.list if not x.saved]
+  def config_keyprint(self, keyprint):
+    self.keyprint = keyprint if not self.keyprint else ''
+  def config_workdir(self, workdir):
+    self.workdir = workdir if not self.workdir else ''
+  def config_servername(self, servername):
+    self.servername = servername if not self.servername else ''
+  def config_mailto(self, mailto):
+    self.mailto = mailto if not self.mailto else ''
+  def config_allowadd(self, allowadd):  # TODO: need read input
+    self.allowadd = allowadd if not self.allowadd else ''
+  def config_allowdelete(self, mailto):  # TODO: need read input
+    self.allowdelete = allowdelete if not self.allowdelete else ''
+  def config_keepmodifiedmetadata(self, keepmodifiedmetadata):  # TODO: need read input
+    self.keepmodifiedmetadata = keepmodifiedmetadata if not self.keepmodifiedmetadata else ''
+  def config_components(self, components):
+    self.components = components if not self.components else ''
+  def config_finalize_components(self):
+    if 'src' in self.compoents and os.path.isfile('/usr/src/COPYRIGHT'):
+      self.components = [c for c in self.components]
+    else:
+      print('src component not installed, skipped')
+  def config_ignorepaths(self, ignorepaths):
+    self.ignorepaths += [c for c in ignorepaths]
+  def config_idsignorepaths(self, idsignorepaths):
+    self.idsignorepaths += [c for c in idsignorepaths]
+  def config_updateifunmodified(self, updateifunmodified):
+    self.updateifunmodified += [c for c in updateifunmodified]
+  def config_mergechanges(self, mergechanges):
+    self.mergechanges += [c for c in mergechanges]
+  def config_basedir(self, basedir):
+    self.basedir = basedir
+  # start with config_StrictComponents ()
   def get(self):
     return self.list
   def getitem(self):
